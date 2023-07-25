@@ -1,0 +1,78 @@
+SELECT * FROM CUSTOMER
+SELECT * FROM FILM
+
+--DUPLICATE CHECKS
+
+SELECT title,
+       release_year,
+       language_id,
+       rental_duration,
+       COUNT(*)
+FROM film
+GROUP BY title,
+         release_year,
+         language_id,
+         rental_duration
+HAVING COUNT(*) >0; --no result set means we have no duplicates
+
+SELECT first_name,
+       last_name,
+       email,
+       COUNT(*)
+FROM customer
+GROUP BY first_name,
+         last_name,
+         email
+HAVING COUNT(*) >1; --no result set means we have no duplicates
+
+-- NON-UNIFORM CHECKS GROUP BY
+
+SELECT title,
+       release_year,
+       language_id,
+       rental_duration
+FROM film
+GROUP BY title,
+         release_year,
+         language_id,
+         rental_duration;
+		 
+SELECT first_name,
+       last_name,
+       email
+FROM customer
+GROUP BY first_name,
+         last_name,
+         email;	 
+		 
+-- NON-UNIFORM CHECKS DISTINCT
+
+SELECT DISTINCT title,
+       release_year,
+       language_id,
+       rental_duration
+FROM film
+
+SELECT DISTINCT first_name,
+       last_name,
+       email
+FROM customer
+
+--MISSING DATA CHECKS
+
+-- SUMMARISING DATA
+SELECT MIN(rental_rate) AS min_rental_rate,
+		MAX(rental_rate) AS max_rental_rate,
+		AVG(rental_rate) AS avg_rental_rate,
+		COUNT(rental_rate) AS count_rent_values,
+		COUNT(*) AS count_rows
+FROM film;
+
+SELECT MODE() WITHIN GROUP (ORDER BY rating)
+	AS modal_value
+FROM film;
+
+SELECT MODE() WITHIN GROUP (ORDER BY last_name)
+	AS modal_value
+FROM customer;
+
