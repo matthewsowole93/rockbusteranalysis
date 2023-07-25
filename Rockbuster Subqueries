@@ -1,0 +1,90 @@
+-- order of statements
+SELECT
+FROM
+WHERE
+GROUP BY
+HAVING
+ORDER BY
+LIMIT
+-- example queries to filter
+SELECT title,
+       release_year,
+       rating
+FROM film
+WHERE release_year = 2006
+  AND rating IN ('PG',
+                 'PG-13',
+                 'G');
+				 
+SELECT title,
+       release_year,
+       rating
+FROM film
+WHERE release_year = 2006
+ORDER BY release_year DESC;
+
+SELECT title,
+       release_year,
+       rating
+FROM film
+WHERE release_year = 2006
+ORDER BY release_year DESC
+LIMIT 10;
+
+-- INNER STATEMENT
+
+SELECT MAX(amount)
+FROM payment;
+
+-- INNER STATEMENT WITH OUTER STATEMENT
+SELECT title,
+       rating,
+       release_year,
+(SELECT MAX(amount)
+FROM payment) AS max_amount
+FROM film;
+
+-- SELECTING FILM WHERE RATE < AVG AMOUNT
+SELECT title,
+       rating,
+       release_year,
+       rental_rate
+FROM film
+WHERE rental_rate <
+    (SELECT AVG(amount)
+     FROM payment);
+
+-- QUERY TO IDENTIFY FILMS RATES G, PG, or PG-13 AND < 100MIN LONG
+
+-- STEP 1 - What films are less than 100min
+SELECT film.film_id,
+       film.rating
+FROM film
+WHERE film.length <=100;
+
+-- STEP 2 - Count number of movies for each rating
+SELECT COUNT(film_ID) AS short_movie_count,
+       rating
+FROM film
+WHERE rating IN ('G', 'PG', 'PG-13')
+GROUP BY rating;
+
+--STEP 3 - Nesting the two queries
+
+SELECT COUNT(shortmovies.film_ID) AS short_movie_count,
+       shortmovies.rating
+FROM
+  (SELECT film.film_ID,
+          film.rating
+   FROM film
+   WHERE film.length <=100) AS shortmovies -- subquery renamed shortmovies
+WHERE shortmovies.rating IN ('G', 'PG', 'PG-13')   
+GROUP BY shortmovies.rating;
+
+-- WHERE INNER statement will return multiple values
+SELECT *
+FROM customer
+WHERE customer_id IN
+    (SELECT customer_id
+     FROM rental
+     WHERE return_date < '2005-07-29' );
